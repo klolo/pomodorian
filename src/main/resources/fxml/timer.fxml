@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.HiddenSidesPane?>
+<?import pl.klolo.pomodoro.component.progress.fill.FillProgressIndicator?>
+<?import java.net.URL?>
+<VBox fx:controller="pl.klolo.pomodoro.controller.TimerController"
+      xmlns:fx="http://javafx.com/fxml" minHeight="100">
+    <stylesheets>
+        <URL value="@../css/application.css"/>
+    </stylesheets>
+
+    <fx:include source="window-bar.fxml"/>
+
+    <StackPane VBox.vgrow="ALWAYS" fx:id="root">
+        <!-- Set your focus -->
+        <VBox alignment="CENTER" fx:id="focus">
+            <padding>
+                <Insets left="20" right="20"/>
+            </padding>
+
+            <Label styleClass="h3" text="What is your focus?">
+                <padding>
+                    <Insets bottom="20"/>
+                </padding>
+            </Label>
+
+            <JFXTextField fx:id="focusField" styleClass="darkInput"/>
+
+            <HBox alignment="BOTTOM_RIGHT">
+                <padding>
+                    <Insets top="20" bottom="10"/>
+                </padding>
+                <JFXButton onAction="#afterSetTarget" styleClass="darkButton" buttonType="FLAT" text="start"/>
+            </HBox>
+        </VBox>
+
+        <!-- Timer -->
+        <HiddenSidesPane visible="false" fx:id="pane" minWidth="100">
+            <content>
+                <BorderPane>
+                    <padding>
+                        <Insets bottom="5" top="20"/>
+                    </padding>
+
+                    <top>
+                        <VBox alignment="CENTER">
+                            <HBox onMouseClicked="#handleMouseClicked">
+                                <HBox HBox.hgrow="ALWAYS" alignment="CENTER">
+                                    <padding>
+                                        <Insets left="20"/>
+                                    </padding>
+                                    <Label fx:id="timerLabel"/>
+                                </HBox>
+                                <HBox alignment="CENTER_RIGHT">
+                                    <padding>
+                                        <Insets right="10"/>
+                                    </padding>
+
+                                    <FontAwesomeIconView fx:id="menuButton" styleClass="no-background"
+                                                         glyphName="BARS" size="25px" glyphStyle="-fx-fill: #f3f3f3"/>
+                                </HBox>
+                            </HBox>
+
+                            <!-- target label -->
+                            <HBox alignment="CENTER">
+                                <padding>
+                                    <Insets top="20"/>
+                                </padding>
+                                <Label fx:id="targetLabel" style="-fx-text-fill: #f3f3f3">
+                                    <padding>
+                                        <Insets right="10"/>
+                                    </padding>
+                                </Label>
+                                <FontAwesomeIconView styleClass="no-background" fx:id="targetLabelIcon"
+                                                     glyphName="INFO" size="15px" glyphStyle="-fx-fill: #f3f3f3"/>
+                            </HBox>
+                        </VBox>
+                    </top>
+
+                    <center>
+                        <VBox alignment="CENTER">
+                            <FillProgressIndicator fx:id="indicator"/>
+                            <HBox alignment="CENTER">
+                                <Label fx:id="progressDone" style="-fx-font-size: 3em; -fx-text-fill: #2b8fff"/>
+                                <Label fx:id="progressTodo" style="-fx-font-size: 3em"/>
+                            </HBox>
+
+                        </VBox>
+
+                    </center>
+
+                    <bottom>
+                        <VBox>
+                            <padding>
+                                <Insets bottom="20"/>
+                            </padding>
+                            <VBox alignment="CENTER" minHeight="50">
+                                <Label fx:id="statusLabel"/>
+                            </VBox>
+                            <HBox alignment="CENTER">
+                                <FontAwesomeIconView fx:id="startButton" styleClass="no-background"
+                                                     glyphName="PLAY" size="25px" glyphStyle="-fx-fill: #f3f3f3"/>
+                                <Region minWidth="10"/>
+                                <FontAwesomeIconView fx:id="stopButton" styleClass="no-background"
+                                                     glyphName="STOP" size="25px" glyphStyle="-fx-fill: #f3f3f3"/>
+                            </HBox>
+                        </VBox>
+                    </bottom>
+                </BorderPane>
+            </content>
+            <top>
+                <VBox alignment="CENTER" prefHeight="20.0" prefWidth="50.0">
+
+                </VBox>
+            </top>
+        </HiddenSidesPane>
+
+        <VBox fx:id="drawer" style="-fx-background-color: #f0f0f0" prefWidth="-NaN">
+            <fx:include source="settings.fxml"/>
+        </VBox>
+    </StackPane>
+
+</VBox>

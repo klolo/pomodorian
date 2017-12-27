@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+
+<VBox fx:controller="pl.klolo.pomodoro.controller.FocusController"
+      xmlns:fx="http://javafx.com/fxml" minHeight="100">
+    <stylesheets>
+        <URL value="@../css/application.css"/>
+    </stylesheets>
+
+
+    <StackPane VBox.vgrow="ALWAYS" fx:id="root">
+        <!-- Set your focus -->
+        <VBox alignment="CENTER" fx:id="focus">
+            <padding>
+                <Insets left="20" right="20"/>
+            </padding>
+
+            <Label styleClass="h3" text="What is your focus?">
+                <padding>
+                    <Insets bottom="20"/>
+                </padding>
+            </Label>
+
+            <JFXTextField fx:id="focusField" styleClass="darkInput"/>
+
+            <HBox alignment="BOTTOM_RIGHT">
+                <padding>
+                    <Insets top="20" bottom="10"/>
+                </padding>
+                <JFXButton onAction="#afterSetTarget" styleClass="darkButton" buttonType="FLAT" text="start"/>
+            </HBox>
+        </VBox>
+    </StackPane>
+</VBox>

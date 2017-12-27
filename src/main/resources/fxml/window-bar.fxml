@@ -1,0 +1,19 @@
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Label?>
+<HBox alignment="CENTER_RIGHT" fx:id="titleBar"
+      fx:controller="pl.klolo.pomodoro.controller.WindowBarController"
+      xmlns:fx="http://javafx.com/fxml">
+    <padding>
+        <Insets top="5" bottom="5" right="10"/>
+    </padding>
+
+    <HBox HBox.hgrow="ALWAYS" alignment="CENTER_LEFT">
+        <padding>
+            <Insets left="10"/>
+        </padding>
+        <Label text="Pomodorian" style="-fx-text-fill: #777777"/>
+    </HBox>
+    <FontAwesomeIconView fx:id="closeButton" glyphName="CLOSE" size="25px" glyphStyle="-fx-fill: #2b8fff"/>
+</HBox>

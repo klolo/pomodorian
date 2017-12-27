@@ -1,0 +1,73 @@
+#timerLabel {
+  -fx-text-fill: #2b8fff;
+  -fx-font-size: 2.5em;
+}
+
+#root {
+  -fx-background-color: linear-gradient(#232526, #232526);
+  -fx-text-fill: #f3f3f3;
+}
+
+@font-face {
+  font-family: Roboto-Thin;
+  src: url('font/Roboto-Thin.ttf');
+}
+
+@font-face {
+  font-family: Roboto-Medium;
+  src: url('font/Roboto-Medium.ttf');
+}
+
+.darkInput {
+  -jfx-focus-color: #2b8fff;
+  -fx-text-fill: #f3f3f3;
+  -fx-font-family: 'Roboto-Medium';
+}
+
+.darkButton {
+  -fx-text-fill: #f3f3f3;
+  -fx-border-color: #f3f3f3;
+  -fx-border-radius: 5;
+  -fx-border-width: 1;
+}
+
+.no-background {
+  -fx-background-color: transparent;
+}
+
+#titleBar {
+  -fx-background-color: #232526;
+  -fx-border-width: 0 0 1 0;
+  -fx-border-color: #333333;
+}
+
+.jfx-slider {
+  -jfx-default-thumb: #2b8fff;
+}
+
+.no-background:hover {
+  -fx-scale-x: 120%;
+  -fx-scale-y: 120%;
+}
+
+#autoContinueCheckBox {
+  -jfx-toggle-color: #2b8fff;
+}
+
+.h3 {
+  -fx-text-fill: #fefefe;
+  -fx-font-size: 2.3em;
+  -fx-font-family: 'Roboto-Thin';
+}
+
+.mainWindow {
+  -fx-background-size: 1200 900;
+  -fx-background-radius: 30;
+  -fx-border-radius: 30;
+  -fx-border-width:5;
+  -fx-border-color: #FC3D44;
+}
+
+#statusLabel {
+  -fx-text-fill: #fefefe;
+}

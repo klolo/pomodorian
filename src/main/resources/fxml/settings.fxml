@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXSlider?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.URL?>
+<VBox xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="pl.klolo.pomodoro.controller.SettingsController">
+    <stylesheets>
+        <URL value="@../css/application.css"/>
+    </stylesheets>
+
+    <padding>
+        <Insets left="10" right="10" top="5"/>
+    </padding>
+
+
+    <HBox alignment="CENTER">
+        <Label style="-fx-text-fill: #333333;" styleClass="h3" text="Pomodorian"/>
+    </HBox>
+
+
+    <HBox alignment="TOP_CENTER">
+        <Label alignment="BOTTOM_CENTER" text="by lolcio"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <padding>
+            <Insets top="25"/>
+        </padding>
+        <JFXToggleButton fx:id="autoContinueCheckBox"/>
+        <Label text="auto pause"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <padding>
+            <Insets top="15"/>
+        </padding>
+        <JFXSlider fx:id="workTime" max="60" min="1" value="25"/>
+        <Label text=" work time"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <padding>
+            <Insets top="15"/>
+        </padding>
+        <JFXSlider fx:id="shortPauseTime" max="60" min="1" value="5"/>
+        <Label text=" short pause"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <padding>
+            <Insets top="15"/>
+        </padding>
+        <JFXSlider fx:id="longPauseTime" max="60" min="1" value="15"/>
+        <Label text=" long pause"/>
+    </HBox>
+</VBox>
