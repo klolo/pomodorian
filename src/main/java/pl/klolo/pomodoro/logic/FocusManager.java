@@ -5,12 +5,9 @@ import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Side;
 import javafx.scene.chart.*;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -22,17 +19,15 @@ import org.controlsfx.control.PopOver;
 import org.controlsfx.control.textfield.TextFields;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
-@AllArgsConstructor
 @Slf4j
 public class FocusManager {
-    private static DateTimeFormatter focusDateFormater = DateTimeFormatter.ofPattern("dd-MM-YYYY");
-
     public JFXTextField focusField;
 
     public Label targetLabel;
@@ -40,6 +35,15 @@ public class FocusManager {
     private ApplicationSettings applicationSettings;
 
     public FontAwesomeIconView targetLabelIcon;
+
+    private AreaChart<String, Number> chart;
+
+    public FocusManager(JFXTextField focusField, Label targetLabel, ApplicationSettings applicationSettings, FontAwesomeIconView targetLabelIcon) {
+        this.focusField = focusField;
+        this.targetLabel = targetLabel;
+        this.applicationSettings = applicationSettings;
+        this.targetLabelIcon = targetLabelIcon;
+    }
 
     public void init() {
         TextFields.bindAutoCompletion(focusField, applicationSettings
@@ -52,7 +56,6 @@ public class FocusManager {
 
     public void afterSetTarget() {
         targetLabel.setText(focusField.getText());
-
         applicationSettings.addFocus(focusField.getText());
 
         targetLabelIcon.setOnMouseClicked(e -> {
@@ -64,9 +67,7 @@ public class FocusManager {
                                     .collect(Collectors.toList())
                     );
 
-            final JFXComboBox<String> comboBox = new JFXComboBox<>(options);
-            comboBox.setStyle("-jfx-focus-color: #2b8fff");
-            comboBox.minWidth(100);
+            final JFXComboBox<String> comboBox = createSelectFocusCombo(options);
 
             Label lblName = new Label("Select your target: ");
             lblName.setPadding(new Insets(10, 0, 10, 0));
@@ -77,9 +78,12 @@ public class FocusManager {
             HBox.setHgrow(comboBox, Priority.ALWAYS);
             selectRow.setAlignment(Pos.CENTER_LEFT);
 
-            VBox vBox = new VBox(selectRow, focuTotalWorkTime, getChart());
+            chart = getChart();
+            fillChart();
+
+            VBox vBox = new VBox(selectRow, focuTotalWorkTime, chart);
             vBox.setPadding(new Insets(10, 10, 10, 10));
-            //Create PopOver and add look and feel
+
             PopOver popOver = new PopOver(vBox);
             popOver.show(targetLabelIcon);
 
@@ -87,28 +91,15 @@ public class FocusManager {
             focuTotalWorkTime.setText("Total time: " + getCurrentFocus().getTotalTime());
 
             comboBox.valueProperty().addListener((obervable, oldValue, newValue) -> {
-                popOver.hide();
-
                 targetLabel.setText(newValue);
                 focuTotalWorkTime.setText("Total time: " + getCurrentFocus().getTotalTime());
+                fillChart();
             });
         });
     }
 
-    private Focus getCurrentFocus() {
-        return applicationSettings.getFocuses()
-                .stream()
-                .filter(focus1 -> focus1.getName().equals(targetLabel.getText()))
-                .findFirst()
-                .get();
-    }
-
-    private AreaChart<String, Number> getChart() {
-        final Axis<String> xAxis = new CategoryAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        yAxis.setLabel("minutes");
-
-        final AreaChart<String, Number> areaChart = new AreaChart<>(xAxis, yAxis);
+    private void fillChart() {
+        chart.getData().clear();
         final Focus currentFocus = getCurrentFocus();
 
         XYChart.Series<String, Number> focusSerie = new XYChart.Series<>();
@@ -130,8 +121,28 @@ public class FocusManager {
         }
 
         focusSerie.getData().sort(Comparator.comparing(XYChart.Data::getXValue));
-        areaChart.getData().add(focusSerie);
+        chart.getData().add(focusSerie);
+    }
 
-        return areaChart;
+    private JFXComboBox<String> createSelectFocusCombo(ObservableList<String> options) {
+        final JFXComboBox<String> comboBox = new JFXComboBox<>(options);
+        comboBox.setStyle("-jfx-focus-color: #2b8fff");
+        comboBox.minWidth(100);
+        return comboBox;
+    }
+
+    private Focus getCurrentFocus() {
+        return applicationSettings.getFocuses()
+                .stream()
+                .filter(focus1 -> focus1.getName().equals(targetLabel.getText()))
+                .findFirst()
+                .get();
+    }
+
+    private AreaChart<String, Number> getChart() {
+        final Axis<String> xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("minutes");
+        return new AreaChart<>(xAxis, yAxis);
     }
 }

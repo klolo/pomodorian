@@ -85,6 +85,9 @@ public class TimerController {
     @Autowired
     private SpringFxmlLoader springFxmlLoader;
 
+    @Autowired
+    private SoundManager soundManager;
+
     private FocusManager focusManager;
 
     private Timer timer = new Timer(this::onTimerTick, this::initAfterFinishTimer);
@@ -118,7 +121,6 @@ public class TimerController {
                         .mapToObj(i -> "\u2022")
                         .collect(joining(" "))
         );
-
     }
 
     private void initializeMenuDrawer() {
@@ -185,6 +187,7 @@ public class TimerController {
         showMessage("It is time for ", durationManager.getStatus().toString());
         statusLabel.setText(durationManager.getStatus().toString());
 
+        soundManager.play(Sound.START);
         changeProgressDots();
     }
 
@@ -224,11 +227,15 @@ public class TimerController {
         }
 
         timer.stop();
-        durationManager.nextStatus();
+        durationManager.resetStatus();
     }
 
     private void initAfterFinishTimer() {
-        remeberFocusWorkTime();
+        if (!timer.isBroken()) {
+            soundManager.play(Sound.TIMEOUT);
+            remeberFocusWorkTime();
+        }
+
         showFullScreenInfo();
         resetDisplay();
 
@@ -243,7 +250,7 @@ public class TimerController {
     }
 
     private void remeberFocusWorkTime() {
-        if (durationManager.getStatus() == DurationManager.Status.POMODORO && !timer.isBroken()) {
+        if (durationManager.getStatus() == DurationManager.Status.POMODORO) {
             getCurrentFocus().addTotalTime(durationManager.getDuration().toMinutes());
         }
     }

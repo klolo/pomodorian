@@ -30,8 +30,22 @@
         <padding>
             <Insets top="25"/>
         </padding>
-        <JFXToggleButton fx:id="autoContinueCheckBox"/>
+        <VBox minWidth="100" alignment="CENTER_LEFT">
+            <JFXToggleButton fx:id="autoContinueCheckBox"/>
+        </VBox>
+
         <Label text="auto pause"/>
+    </HBox>
+
+    <HBox alignment="CENTER">
+        <padding>
+            <Insets top="-15"/>
+        </padding>
+        <VBox minWidth="100" alignment="CENTER_LEFT">
+            <JFXToggleButton fx:id="playSoundCheckBox"/>
+        </VBox>
+
+        <Label text="sound"/>
     </HBox>
 
     <HBox alignment="CENTER">

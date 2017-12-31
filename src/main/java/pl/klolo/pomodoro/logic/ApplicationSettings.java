@@ -27,6 +27,8 @@ public class ApplicationSettings implements Serializable {
 
     private int longPauseTime = 15;
 
+    private boolean playSounds = true;
+
     private Set<Focus> focuses = new TreeSet<>();
 
     private void loadSettings(ApplicationSettings base) {
@@ -35,6 +37,7 @@ public class ApplicationSettings implements Serializable {
         shortPauseTime = base.shortPauseTime;
         longPauseTime = base.longPauseTime;
         focuses = base.focuses;
+        playSounds = base.playSounds;
     }
 
     public void addFocus(final String newFocus) {

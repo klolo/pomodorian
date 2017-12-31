@@ -28,9 +28,15 @@ public class SettingsController {
     @FXML
     public JFXToggleButton autoContinueCheckBox;
 
+    @FXML
+    public JFXToggleButton playSoundCheckBox;
+
     public void initialize() {
         autoContinueCheckBox.setSelected(false);
         autoContinueCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> applicationSettings.setAutoContinue(newValue));
+
+        playSoundCheckBox.setSelected(applicationSettings.isPlaySounds());
+        playSoundCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> applicationSettings.setPlaySounds(newValue));
 
         workTime.valueProperty().addListener((observable, oldValue, newValue) -> applicationSettings.setWorkTime(newValue.intValue()));
         workTime.setValue(applicationSettings.getWorkTime());

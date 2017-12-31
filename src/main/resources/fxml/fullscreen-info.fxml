@@ -1,7 +1,5 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
@@ -17,20 +15,17 @@
         <padding>
             <Insets top="5" bottom="5" right="10"/>
         </padding>
-        <!--<FontAwesomeIconView fx:id="closeButton" glyphName="CLOSE" size="50px" glyphStyle="-fx-fill: #2b8fff"/>-->
     </HBox>
     <HBox alignment="TOP_CENTER">
         <Label text="Koniec work" fx:id="header" styleClass="header"/>
     </HBox>
 
-    <HBox alignment="TOP_CENTER">
+    <HBox VBox.vgrow="ALWAYS" alignment="TOP_CENTER">
         <padding>
-            <Insets top="50"/>
+            <Insets top="35" bottom="5" right="10"/>
         </padding>
-        <ImageView id="boxImage">
-            <image>
-                <Image requestedHeight="200" requestedWidth="200" url="@../img/clock.png"/>
-            </image>
-        </ImageView>
+        <HBox maxHeight="250" fx:id="counterContainer">
+        </HBox>
     </HBox>
+
 </VBox>
