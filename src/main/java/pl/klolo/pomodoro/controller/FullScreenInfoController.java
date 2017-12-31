@@ -28,12 +28,17 @@ public class FullScreenInfoController {
 
     public void initialize() {
         header.setText("It is time for " + durationManager.getNextStatus().toString());
-        FxTimer.runLater(java.time.Duration.ofMillis(3_000), () -> root.setOnMouseClicked(e -> closeScene()));
+        root.requestFocus();
+        FxTimer.runLater(java.time.Duration.ofMillis(2_000), () -> root.setOnMouseClicked(e -> closeScene()));
+        FxTimer.runLater(java.time.Duration.ofMillis(60_000), this::closeScene);
     }
 
     private void closeScene() {
         Stage stage = (Stage) root.getScene().getWindow();
+
+        stage.hide();
         stage.setFullScreen(false);
+
         FxTimer.runLater(java.time.Duration.ofMillis(50), stage::close);
     }
 }

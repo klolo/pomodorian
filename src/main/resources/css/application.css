@@ -60,6 +60,12 @@
   -fx-font-family: 'Roboto-Thin';
 }
 
+.h4 {
+  -fx-text-fill: #fefefe;
+  -fx-font-size: 1.8em;
+  -fx-font-family: 'Roboto-Thin';
+}
+
 .mainWindow {
   -fx-background-size: 1200 900;
   -fx-background-radius: 30;

@@ -23,7 +23,7 @@ public class SettingsController {
     public JFXSlider longPauseTime;
 
     @Autowired
-    private ApplicationSettings applicationSettings;
+    public ApplicationSettings applicationSettings;
 
     @FXML
     public JFXToggleButton autoContinueCheckBox;
@@ -33,8 +33,12 @@ public class SettingsController {
         autoContinueCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> applicationSettings.setAutoContinue(newValue));
 
         workTime.valueProperty().addListener((observable, oldValue, newValue) -> applicationSettings.setWorkTime(newValue.intValue()));
-        shortPauseTime.valueProperty().addListener((observable, oldValue, newValue) -> applicationSettings.setShortPauseTime(newValue.intValue()));
-        longPauseTime.valueProperty().addListener((observable, oldValue, newValue) -> applicationSettings.setLongPauseTime(newValue.intValue()));
-    }
+        workTime.setValue(applicationSettings.getWorkTime());
 
+        shortPauseTime.valueProperty().addListener((observable, oldValue, newValue) -> applicationSettings.setShortPauseTime(newValue.intValue()));
+        shortPauseTime.setValue(applicationSettings.getShortPauseTime());
+
+        longPauseTime.valueProperty().addListener((observable, oldValue, newValue) -> applicationSettings.setLongPauseTime(newValue.intValue()));
+        longPauseTime.setValue(applicationSettings.getLongPauseTime());
+    }
 }

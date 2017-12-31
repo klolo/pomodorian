@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
+import pl.klolo.pomodoro.MockFocus;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -27,20 +27,20 @@ public class ApplicationSettings implements Serializable {
 
     private int longPauseTime = 15;
 
-    private Set<Focus> latestFocus = new TreeSet<>();
+    private Set<Focus> focuses = new TreeSet<>();
 
     private void loadSettings(ApplicationSettings base) {
         autoContinue = base.autoContinue;
         workTime = base.workTime;
         shortPauseTime = base.shortPauseTime;
         longPauseTime = base.longPauseTime;
-        latestFocus = base.latestFocus;
+        focuses = base.focuses;
     }
 
     public void addFocus(final String newFocus) {
         final Focus focus = new Focus();
         focus.setName(newFocus);
-        latestFocus.add(focus);
+        focuses.add(focus);
     }
 
     @PostConstruct

@@ -3,17 +3,10 @@ package pl.klolo.pomodoro.controller;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.StackPane;
@@ -23,26 +16,17 @@ import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.control.HiddenSidesPane;
 import org.controlsfx.control.Notifications;
-import org.controlsfx.control.PopOver;
-import org.controlsfx.control.textfield.TextFields;
 import org.reactfx.util.FxTimer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.klolo.pomodoro.Launch;
 import pl.klolo.pomodoro.component.progress.fill.FillProgressIndicator;
 import pl.klolo.pomodoro.engine.SpringFxmlLoader;
-import pl.klolo.pomodoro.logic.ApplicationSettings;
-import pl.klolo.pomodoro.logic.DurationManager;
-import pl.klolo.pomodoro.logic.Focus;
-import pl.klolo.pomodoro.logic.Timer;
+import pl.klolo.pomodoro.logic.*;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 @Component
 @Slf4j
@@ -81,7 +65,7 @@ public class TimerController {
     public FontAwesomeIconView stopButton;
 
     @FXML
-    public StackPane root;
+    public VBox root;
 
     @FXML
     public Label statusLabel;
@@ -101,9 +85,14 @@ public class TimerController {
     @Autowired
     private SpringFxmlLoader springFxmlLoader;
 
+    private FocusManager focusManager;
+
     private Timer timer = new Timer(this::onTimerTick, this::initAfterFinishTimer);
 
     public void initialize() {
+        focusManager = new FocusManager(focusField, targetLabel, applicationSettings, targetLabelIcon);
+        focusManager.init();
+
         timerLabel.setText(normalizeTime(durationManager.getDuration().getSeconds() / 60) + ":00");
         pane.setPinnedSide(Side.TOP);
         drawer.setMaxWidth(Launch.SCENE_WIDTH * 0.8);
@@ -114,9 +103,13 @@ public class TimerController {
         stopButton.setGlyphStyle("-fx-fill: #777777");
 
         focusField.setOnKeyPressed(ke -> {
-            if (ke.getCode().equals(KeyCode.ENTER)) {
-                afterSetTarget();
+            if (!ke.getCode().equals(KeyCode.ENTER)) {
+                return;
             }
+
+            pane.setVisible(true);
+            focus.setVisible(false);
+            focusManager.afterSetTarget();
         });
 
         startButton.setOnMouseClicked(e -> onStartPauseButton());
@@ -126,12 +119,6 @@ public class TimerController {
                         .collect(joining(" "))
         );
 
-        TextFields.bindAutoCompletion(focusField, applicationSettings
-                .getLatestFocus()
-                .stream()
-                .map(Focus::getName)
-                .collect(toList())
-        );
     }
 
     private void initializeMenuDrawer() {
@@ -141,6 +128,7 @@ public class TimerController {
 
         StackPane.setAlignment(drawer, Pos.TOP_LEFT);
         menuButton.setOnMouseClicked(e -> onShowMenu(openNav, closeNav));
+        root.setOnMouseClicked(e -> closeMenu(closeNav));
 
         FxTimer.runLater(java.time.Duration.ofMillis(250), () -> closeMenu(closeNav));
     }
@@ -236,17 +224,15 @@ public class TimerController {
         }
 
         timer.stop();
-        initAfterFinishTimer();
         durationManager.nextStatus();
     }
 
     private void initAfterFinishTimer() {
-        getCurrentFocus().setTotalTime(getCurrentFocus().getTotalTime() + durationManager.getDuration().toMinutes());
-
+        remeberFocusWorkTime();
         showFullScreenInfo();
         resetDisplay();
-        statusLabel.setText(durationManager.getNextStatus().toString());
 
+        statusLabel.setText(durationManager.getNextStatus().toString());
 
         if (applicationSettings.isAutoContinue()) {
             onStartPauseButton();
@@ -256,10 +242,17 @@ public class TimerController {
         }
     }
 
+    private void remeberFocusWorkTime() {
+        if (durationManager.getStatus() == DurationManager.Status.POMODORO && !timer.isBroken()) {
+            getCurrentFocus().addTotalTime(durationManager.getDuration().toMinutes());
+        }
+    }
+
     private void resetDisplay() {
         stopButton.setGlyphStyle("-fx-fill: #777777");
         startButton.setGlyphName("PLAY");
-        timerLabel.setText(normalizeTime(durationManager.getDuration().getSeconds() / 60) + ":00");
+        final java.time.Duration nextDuration = durationManager.getDurationForStatus(durationManager.getNextStatus());
+        timerLabel.setText(normalizeTime(nextDuration.getSeconds() / 60) + ":00");
         indicator.setProgress(0);
     }
 
@@ -275,7 +268,7 @@ public class TimerController {
     }
 
     private void showFullScreenInfo() {
-        if (applicationSettings.isAutoContinue()) {
+        if (applicationSettings.isAutoContinue() || timer.isBroken()) {
             return;
         }
 
@@ -287,55 +280,19 @@ public class TimerController {
         stage.show();
         stage.setAlwaysOnTop(true);
         stage.setFullScreen(true);
+        stage.requestFocus();
+    }
+
+    private Focus getCurrentFocus() {
+        return applicationSettings.getFocuses().stream()
+                .filter(focus1 -> focus1.getName().equals(targetLabel.getText()))
+                .findFirst()
+                .get();
     }
 
     public void afterSetTarget() {
         pane.setVisible(true);
         focus.setVisible(false);
-        targetLabel.setText(focusField.getText());
-
-        applicationSettings.addFocus(focusField.getText());
-
-        targetLabelIcon.setOnMouseClicked(e -> {
-            ObservableList<String> options =
-                    FXCollections.observableArrayList(
-                            applicationSettings.getLatestFocus()
-                                    .stream()
-                                    .map(Focus::getName)
-                                    .collect(Collectors.toList())
-                    );
-
-            final ComboBox<String> comboBox = new ComboBox<>(options);
-
-            Label lblName = new Label("Select your target:");
-            lblName.setPadding(new Insets(10, 0, 10, 0));
-
-            Label focuTotalWorkTime = new Label("Totla work time:");
-
-            VBox vBox = new VBox(lblName, comboBox, focuTotalWorkTime);
-            vBox.setPadding(new Insets(10, 10, 10, 10));
-
-            //Create PopOver and add look and feel
-            PopOver popOver = new PopOver(vBox);
-            popOver.show(targetLabelIcon);
-
-            comboBox.valueProperty().setValue(targetLabel.getText());
-            focuTotalWorkTime.setText(getCurrentFocus().getTotalTime() + "");
-
-            comboBox.valueProperty().addListener((obervable, oldValue, newValue) -> {
-                popOver.hide();
-
-                targetLabel.setText(newValue);
-                focuTotalWorkTime.setText(getCurrentFocus().getTotalTime() + "");
-            });
-        });
-    }
-
-    private Focus getCurrentFocus() {
-        return applicationSettings.getLatestFocus()
-                .stream()
-                .filter(focus1 -> focus1.getName().equals(targetLabel.getText()))
-                .findFirst()
-                .get();
+        focusManager.afterSetTarget();
     }
 }

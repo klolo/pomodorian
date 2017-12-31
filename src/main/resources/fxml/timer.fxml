@@ -9,7 +9,7 @@
 <?import org.controlsfx.control.HiddenSidesPane?>
 <?import pl.klolo.pomodoro.component.progress.fill.FillProgressIndicator?>
 <?import java.net.URL?>
-<VBox fx:controller="pl.klolo.pomodoro.controller.TimerController"
+<VBox fx:controller="pl.klolo.pomodoro.controller.TimerController" fx:id="root"
       xmlns:fx="http://javafx.com/fxml" minHeight="100">
     <stylesheets>
         <URL value="@../css/application.css"/>
@@ -17,26 +17,26 @@
 
     <fx:include source="window-bar.fxml"/>
 
-    <StackPane VBox.vgrow="ALWAYS" fx:id="root">
+    <StackPane VBox.vgrow="ALWAYS" >
         <!-- Set your focus -->
         <VBox alignment="CENTER" fx:id="focus">
             <padding>
                 <Insets left="20" right="20"/>
             </padding>
 
-            <Label styleClass="h3" text="What is your focus?">
+            <Label styleClass="h4" text="Welcome in Pomodorian">
                 <padding>
-                    <Insets bottom="20"/>
+                    <Insets bottom="40"/>
                 </padding>
             </Label>
 
-            <JFXTextField fx:id="focusField" styleClass="darkInput"/>
+            <JFXTextField fx:id="focusField" labelFloat="true" promptText="What will you do today?" styleClass="darkInput"/>
 
             <HBox alignment="BOTTOM_RIGHT">
                 <padding>
                     <Insets top="20" bottom="10"/>
                 </padding>
-                <JFXButton onAction="#afterSetTarget" styleClass="darkButton" buttonType="FLAT" text="start"/>
+                <JFXButton onAction="#afterSetTarget" style="-fx-border-radius: 10" styleClass="darkButton" buttonType="FLAT" text="start"/>
             </HBox>
         </VBox>
 

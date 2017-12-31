@@ -3,6 +3,7 @@ package pl.klolo.pomodoro.logic;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
@@ -22,6 +23,9 @@ public class Timer {
 
     private final Runnable onFinish;
 
+    @Getter
+    private boolean broken;
+
     public Timer(LongBiConsumer onTickConsumer, Runnable onFinish) {
         this.onTickConsumer = onTickConsumer;
         this.onFinish = onFinish;
@@ -33,6 +37,7 @@ public class Timer {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.getKeyFrames().add(new KeyFrame(javafx.util.Duration.seconds(1), e -> processTick(endTime)));
         timeline.playFromStart();
+        broken = false;
     }
 
     private void processTick(final LocalTime endTime) {
@@ -49,8 +54,7 @@ public class Timer {
             return;
         }
 
-        Optional
-                .ofNullable(onTickConsumer)
+        Optional.ofNullable(onTickConsumer)
                 .ifPresent(c -> c.accept(minutesToEnd, secondsToEnd));
     }
 
@@ -76,6 +80,9 @@ public class Timer {
 
     public void stop() {
         log.info("stop");
+
+        broken = true;
+
         Optional.of(onFinish).ifPresent(Runnable::run);
         Optional.of(timeline).ifPresent(Timeline::stop);
         timeline = null;
