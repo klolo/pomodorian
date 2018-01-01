@@ -121,6 +121,13 @@ public class TimerController {
                         .mapToObj(i -> "\u2022")
                         .collect(joining(" "))
         );
+
+        durationManager.registerOnStatusChangeListener(this::onStatusChange);
+    }
+
+    private void onStatusChange() {
+
+
     }
 
     private void initializeMenuDrawer() {

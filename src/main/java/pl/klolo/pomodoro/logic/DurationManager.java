@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.LinkedList;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -24,6 +26,8 @@ public class DurationManager {
 
     @Getter
     private final int maxPomodoroInSeries = 4;
+
+    private List<Runnable> onStatusChangeListeners = new LinkedList<>();
 
     public enum Status {
         IDLE,
@@ -92,6 +96,7 @@ public class DurationManager {
                 break;
         }
 
+        onStatusChangeListeners.forEach(Runnable::run);
         log.info("New status: {}", status);
     }
 
@@ -115,5 +120,9 @@ public class DurationManager {
             default:
                 return Duration.of(applicationSettings.getWorkTime(), unit);
         }
+    }
+
+    public void registerOnStatusChangeListener(final Runnable r) {
+        onStatusChangeListeners.add(r);
     }
 }

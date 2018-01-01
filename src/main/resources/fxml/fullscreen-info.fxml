@@ -13,7 +13,7 @@
 
     <HBox alignment="TOP_RIGHT">
         <padding>
-            <Insets top="5" bottom="5" right="10"/>
+            <Insets top="25" bottom="5" right="10"/>
         </padding>
     </HBox>
     <HBox alignment="TOP_CENTER">
